@@ -1,46 +1,53 @@
 {
-  "name": "Doc Theme",
+  "name": "Copenhagen",
   "author": "Zendesk",
-  "version": "1.0.0",
+  "version": "0.0.1",
   "api_version": 1,
   "settings": [
     {
       "label": "Colors",
       "variables": [
         {
-          "identifier": "brand_color",
+          "identifier": "color_1",
           "type": "color",
           "description": "Brand color for major navigational elements",
           "label": "Brand color",
-          "value": "#0072ef"
+          "value": "#7B7B7B"
         },
         {
-          "identifier": "brand_text_color",
+          "identifier": "color_skip",
+          "type": "color",
+          "description": "Make thing ugly",
+          "label": "Skip color",
+          "value": "#11f1f1"
+        },
+        {
+          "identifier": "color_2",
           "type": "color",
           "description": "Brand color for hover and active states",
           "label": "Brand text color",
-          "value": "#ffffff"
+          "value": "#404040"
         },
         {
-          "identifier": "text_color",
+          "identifier": "body_text",
           "type": "color",
           "description": "Text color for body and heading elements",
           "label": "Text color",
           "value": "#333333"
         },
         {
-          "identifier": "link_color",
+          "identifier": "color_4",
           "type": "color",
           "description": "Text color for link elements",
           "label": "Link color",
-          "value": "#0072ef"
+          "value": "#1A74B0"
         },
         {
-          "identifier": "background_color",
+          "identifier": "color_5",
           "type": "color",
           "description": "Background color of your Help Center",
           "label": "Background color",
-          "value": "#ffffff"
+          "value": "#FFFFFF"
         }
       ]
     },
@@ -48,10 +55,10 @@
       "label": "Fonts",
       "variables": [
         {
-          "identifier": "heading_font",
+          "identifier": "font_1",
           "type": "list",
           "description": "Font for headings",
-          "label": "Heading Font",
+          "label": "Heading",
           "value": "-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif",
           "options": [
             {
@@ -121,10 +128,10 @@
           ]
         },
         {
-          "identifier": "text_font",
+          "identifier": "font_2",
           "type": "list",
           "description": "Font for body text",
-          "label": "Text Font",
+          "label": "Text",
           "value": "-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif",
           "options": [
             {
@@ -232,25 +239,6 @@
           "type": "file",
           "description": "Image for the community section on the home page",
           "label": "Community banner"
-        }
-      ]
-    },
-    {
-      "label": "Homepage",
-      "variables": [
-        {
-          "identifier": "homepage_title",
-          "type": "text",
-          "description": "The title text on the home page",
-          "label": "Homepage Title",
-          "value": "Welcome to Zen Themes!"
-        },
-        {
-          "identifier": "homepage_description",
-          "type": "text",
-          "description": "The description text displayed on the home page",
-          "label": "Homepage Description",
-          "value": "Get familiar with the features and how they work:"
         }
       ]
     }

@@ -1,183 +1,60 @@
-// Custom delimiter for Vue templates
+var HC = {};
+HC.templates = {};
+
+HC.SETTINGS = {
+}
+
 Vue.options.delimiters = ['{[{', '}]}'];
 
 
-var sidebar = new Vue({
-  data: {
-    isArticle: false,
-    categories: [],
-    sections: [],
-    articles: [],
-    currentArticle: null,
-    activeSection: null,
-    nav: {
-      prev: null,
-      next: null,
-    }
-  },
+/*=========================================================
+ * HOME TEMPLATE
+ *========================================================= */
 
-  created: function() {
-    this.isArticle = window.location.pathname.indexOf("/articles/") > -1;
-    this.fetchData();
+HC.templates.home = new Vue({
+
+  data: {
+    currentTab: null
   },
 
   mounted: function() {
-    // Add class for styling purpose
-    $("main").addClass("main-sidebar");
+    // Set first category or section as current tab by default
+    var firstTab = $(".nav-list").children(".nav-item").first();
+    this.currentTab = $(firstTab).data("id");
+
+    // Display nav content
+    $(".nav-content-inner").removeClass('hide');
   },
-  
+
   methods: {
-
     /**
-     * Return true if section is displaying articles
-     * @param  {integer}  id section ID
+     * Return true if given id matches current tab ID
+     * @param  {integer}  id category or section ID
      * @return {Boolean}
      */
-    isOpen: function(id) {
-      return id == this.activeSection ? 'open' : '';
+    isActive: function(id) {
+      return id === this.currentTab;
     },
 
     /**
-     * Return true if article ID matches current ID
-     * @param  {integer}  id article ID
-     * @return {Boolean}
+     * Sets current tab to given ID
+     * @param {integer} id category or section
      */
-    isCurrent: function(id) {
-      var currentId = this._getPageId(window.location.href);
-      return id == currentId ? 'current' : '';
-    },
-
-    /**
-     * Fetches article, section and category data
-     * @param  {string} url API endpoint url
-     */
-    fetchData: function(url) {
-      var url = url || "/api/v2/help_center/" + this._getLocale() + "/articles.json?per_page=100&include=sections,categories";
-
-      $.get(url, function(data){
-        if (data.count) {
-          this.categories = _.sortBy(_.uniq(this.categories.concat(data.categories), "id"), "position");
-          this.sections = _.sortBy(_.uniq(this.sections.concat(data.sections), "id"), "position");
-          this.articles = _.sortBy(_.uniq(this.articles.concat(data.articles), "id"), "position");
-
-          this.mapArticlesToSections(this.articles, this.sections);
-          this.mapSectionsToCategories(this.sections, this.categories);
-
-          // Set current article and nav links if on article page
-          if (this.isArticle) {
-            this.currentArticle = this.getCurrentArticle(this.articles);
-            if (this.currentArticle) {
-              this.activeSection = this.currentArticle.section_id;
-              this.setNavLinks(this.sections, this.currentArticle);
-            }
-          }
-
-          if (data.next_page) {
-            this.fetchData(data.next_page + "&per_page=100");
-          }
-        }
-      }.bind(this));
-    },
-
-    /**
-     * Map list of articles to section IDs
-     * @param  {array} articles
-     * @param  {array} sections
-=     */
-    mapArticlesToSections: function(articles, sections) {
-      var articleGroups = _.groupBy(articles, "section_id");
-
-      _.each(sections, function(section){
-        section.articles = articleGroups[section.id];
-      }, this);
-    },
-
-    /**
-     * Map list of sections to category IDs
-     * @param  {array} sections
-     * @param  {array} categories
-=     */
-    mapSectionsToCategories: function(sections, categories) {
-      var sectionGroups = _.groupBy(sections, "category_id");
-
-      _.each(categories, function(category){
-        category.sections = sectionGroups[category.id];
-      }, this);
-    },
-
-    /**
-     * Set active section
-     * @param {integer} sectionId section ID
-     */
-    setActiveSection: function(sectionId) {
-      if (sectionId === this.activeSection) {
-        this.activeSection = null;
-      } else {
-        this.activeSection = sectionId;
-      }
-    },
-
-    /**
-     * Return current article
-     * @param  {array} articles
-     * @return {object} current article
-     */
-    getCurrentArticle: function(articles) {
-      var currArticleId = this._getPageId(window.location.href),
-          currArticle = _.find(articles, {id: currArticleId});
-
-      return currArticle;
-    },
-
-    /**
-     * Set prev and next links
-     * @param {array} sections
-     * @param {object} currArticle
-     */
-    setNavLinks: function(sections, currArticle) {
-      let currSection = _.find(sections, {id: currArticle.section_id}),
-          currArticleIndex = _.findIndex(currSection.articles, {id: currArticle.id}),
-          prevArticle,
-          nextArticle;
-
-      if (currArticleIndex !== 'undefined') {
-        this.nav.prev = currArticleIndex > 0 ? currSection.articles[currArticleIndex - 1] : null;
-        this.nav.next = currArticleIndex < currSection.articles.length ? currSection.articles[currArticleIndex + 1] : null;
-      }
-
-    },
-
-    /**
-     * Helper method to get current help center locale
-     * @return {string} locale code
-     */
-    _getLocale: function() {
-      var links = window.location.href.split("/"),
-          hcIndex = links.indexOf("hc"),
-          links2 = links[hcIndex + 1].split("?"),
-          locale = links2[0];
-
-      return locale;
-    },
-
-    /**
-     * Helper method to get current page ID
-     * @param  {string} url
-     * @return {integer} page ID
-     */
-    _getPageId: function(url) {
-      var links = url.split("/"),
-          page = links[links.length - 1],
-          result = page.split("-")[0];
-
-      return parseInt(result,10) || null;
-    },
+    setTab: function(id) {
+      this.currentTab = id;
+    }
   }
 });
 
 
 
 
+
+
+
+/*
+ * jQuery v1.9.1 included
+ */
 
 $(document).ready(function() {
 
@@ -189,7 +66,7 @@ $(document).ready(function() {
 
   // show form controls when the textarea receives focus or backbutton is used and value exists
   var $commentContainerTextarea = $(".comment-container textarea"),
-  $commentContainerFormControls = $(".comment-form-controls, .comment-ccs");
+    $commentContainerFormControls = $(".comment-form-controls, .comment-ccs");
 
   $commentContainerTextarea.one("focus", function() {
     $commentContainerFormControls.show();
@@ -216,7 +93,7 @@ $(document).ready(function() {
     $requestMarkAsSolvedCheckbox = $(".request-container .comment-container input[type=checkbox]"),
     $requestCommentSubmitButton = $(".request-container .comment-container input[type=submit]");
 
-  $requestMarkAsSolvedButton.on("click", function () {
+  $requestMarkAsSolvedButton.on("click", function() {
     $requestMarkAsSolvedCheckbox.attr("checked", true);
     $requestCommentSubmitButton.prop("disabled", true);
     $(this).attr("data-disabled", true).closest("form").submit();

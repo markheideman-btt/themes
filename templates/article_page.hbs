@@ -1,33 +1,28 @@
-<main class="main-sidebar" role="main">
-<div id="sidebar" class="sidebar-panel">
-  <ul class="sidebar">
-    <li class="sidebar-item sidebar-home">
-      <a href="{{page_path 'help_center'}}" class="sidebar-item-title">
-        Home
-      </a>
-    </li>
-    <li class="sidebar-section" v-for='category in categories' :data-id='category.id'>
-      <h4 class="sidebar-category-title" v-cloak>{[{category.name}]}</h4>
-      <ul>
-        <li :class="['sidebar-item', isOpen(section.id)]" v-for='section in category.sections' :data-id='section.id'>
-          <span class="sidebar-item-title" @click='setActiveSection(section.id)'>
-            {[{section.name}]}
-          </span>
-          <ul v-if='section.id === activeSection'>
-            <li :class="['sidebar-item', isCurrent(article.id)]" v-for='article in section.articles'>
-              <a :href='article.html_url' class="sidebar-item-link">
-                {[{article.title}]}
-              </a>
-            </li>
-          </ul>
-        </li>
-      </ul>
-    </li>
-  </ul>
-</div>
-
-<div class="container content">
+<section class="hero">
+  <div class="hero-inner">
+    {{search scoped=true submit=false instant=true class='search search-full'}}
+  </div>
+</section>
+<div class="container">
+  <nav class="sub-nav">
+    {{breadcrumbs}}
+  </nav>
   <div class="article-container" id="article-container">
+    <section class="article-sidebar">
+      <section class="section-articles collapsible-sidebar">
+        <h3 class="collapsible-sidebar-title sidenav-title">{{t 'articles_in_section'}}</h3>
+        <ul>
+          {{#each section.articles}}
+            <li>
+              <a href="{{url}}" class="sidenav-item {{#is id ../article.id}}current-article{{/is}}">{{title}}</a>
+            </li>
+          {{/each}}
+        </ul>
+        {{#if section.more_articles}}
+          <a href="{{section.url}}" class="article-sidebar-item">{{t 'see_more'}}</a>
+        {{/if}}
+      </section>
+    </section>
     <article class="article">
       <header class="article-header">
         <h1 title="{{article.title}}" class="article-title">
@@ -36,12 +31,30 @@
             <span class="icon-lock" title="{{t 'internal'}}"></span>
           {{/if}}
         </h1>
+        <div class="article-author">
+          <div class="avatar article-avatar">
+            {{#if article.author.agent}}
+              <span class="icon-agent"></span>
+            {{/if}}
+            <img src="{{article.author.avatar_url}}" alt="Avatar" class="user-avatar" />
+          </div>
+          <div class="article-meta">
+            {{#link 'user_profile' id=article.author.id}} {{article.author.name}}
+            {{/link}}
+            <ul class="meta-group">
+              {{#is article.created_at article.updated_at}}
+                <li class="meta-data">{{date article.created_at timeago=true}}</li>
+                {{else}}
+                  <li class="meta-data">{{date article.updated_at timeago=true}}</li>
+                  <li class="meta-data">{{t 'updated'}}</li>
+              {{/is}}
+            </ul>
+          </div>
+        </div>
       </header>
-
       <section class="article-info">
         <div class="article-content">
           <div class="article-body">{{article.body}}</div>
-
           <div class="article-attachments">
             <ul class="attachments">
               {{#each attachments}}
@@ -57,28 +70,29 @@
           </div>
         </div>
       </section>
-
       <footer>
         <div class="article-footer">
-          <div class="article-nav-box">
-            <a v-if="nav.prev" :href="nav.prev.html_url" class="article-nav article-nav-prev">
-              <span class="article-nav-label">Prev</span>
-              <span class="article-nav-title">{[{nav.prev.title}]}</span>
-            </a>
-          </div>
-          <div class="article-nav-box">
-            <a v-if="nav.next" :href="nav.next.html_url" class="article-nav article-nav-next">
-              <span class="article-nav-label">Next</span>
-              <span class="article-nav-title">{[{nav.next.title}]}</span>
-            </a>
-          </div>
         </div>
-
+        {{#with article}}
+          <div class="article-votes">
+            <span class="article-votes-question">{{t 'was_this_article_helpful'}}</span>
+            <div class="article-votes-controls" role='radiogroup'>
+              {{vote 'up' role='radio' class='button article-vote article-vote-up'}} {{vote 'down' role='radio' class='button article-vote article-vote-down'}}
+            </div>
+            <small class="article-votes-count">
+              {{vote 'label' class='article-vote-label'}}
+            </small>
+          </div>
+        {{/with}}
+        <div class="article-return-to-top">
+          <a href="#article-container">{{t 'return_to_top'}}
+            <span class="icon-arrow-up"></span>
+          </a>
+        </div>
       </footer>
+      <section class="article-relatives">
+        {{recent_articles}} {{related_articles}}
+      </section>
     </article>
   </div>
 </div>
-
-
-<script>sidebar.$mount("main");</script>
-</main>
